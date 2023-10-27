@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import src.Alarma;
 import src.Usuario;
 
 public class CentralDeAlarmas {
@@ -16,4 +17,13 @@ public class CentralDeAlarmas {
 		assertNotNull(nuevo);
 	}
 
+	@Test
+	public void QueSePuedaCrearUnaAlarma() {
+		Integer idAlarma = 1;
+		Integer codigoActivacion = 1234;
+		Integer codigoConfiguracion= 0000;
+		String nombre = "TuAlarma";
+		Alarma nuevo = new Alarma(idAlarma, codigoActivacion, codigoConfiguracion, nombre);
+		assertNotNull(nuevo);
+	}
 }
