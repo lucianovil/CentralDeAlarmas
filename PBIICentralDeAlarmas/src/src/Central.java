@@ -1,16 +1,18 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Central {
 
 	private List<Alarma> alarmas;
-	private List<Usuario> usuarios;
+	private Set<Usuario> usuarios;
 
 	public Central() {
 		this.alarmas = new ArrayList<Alarma>();
-		this.usuarios = new ArrayList<Usuario>();
+		this.usuarios = new HashSet<Usuario>();
 	}
 
 	public List<Alarma> getAlarmas() {
@@ -20,14 +22,12 @@ public class Central {
 	public void setAlarmas(List<Alarma> alarmas) {
 		this.alarmas = alarmas;
 	}
-	
-	
 
-	public List<Usuario> getUsuarios() {
+	public Set<Usuario> getUsuarios() {
 		return usuarios;
 	}
 
-	public void setUsuarios(List<Usuario> usuarios) {
+	public void setUsuarios(Set<Usuario> usuarios) {
 		this.usuarios = usuarios;
 	}
 
@@ -41,15 +41,9 @@ public class Central {
 		
 	}
 
-	public Boolean registrarUsuario(Usuario usuario) {
-		for(Usuario usuarioABuscar: usuarios) {
-			if (usuarioABuscar.getDni().equals(usuario.getDni())) {
-				return false;
-			}
-		}
+	public Boolean agregarUsuario(Usuario usuario) {
 		return this.usuarios.add(usuario);
 		
 	}
-	
 	
 }

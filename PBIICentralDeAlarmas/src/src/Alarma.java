@@ -1,6 +1,8 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Alarma {
 
@@ -8,18 +10,20 @@ public class Alarma {
 	private Integer codigoActivacion;
 	private Integer codigoConfiguracion;
 	private String nombre;
-	private ArrayList<Usuario> usuarios;
+	private Set<Usuario> usuarios;
 	private ArrayList<Accion> acciones;
-	private ArrayList<Sensor> sensores;
+	private Set<Sensor> sensores;
+	private Boolean estadoAlarma;
 
 	public Alarma(Integer idAlarma, Integer codigoActivacion, Integer codigoConfiguracion, String nombre) {
 		this.idAlarma=idAlarma;
 		this.codigoActivacion=codigoActivacion;
 		this.codigoConfiguracion=codigoConfiguracion;
 		this.nombre=nombre;
-		this.usuarios =new ArrayList<Usuario>();
+		this.usuarios =new HashSet<Usuario>();
 		this.acciones =new ArrayList<Accion>();
-		this.sensores =new ArrayList<Sensor>();
+		this.sensores =new HashSet<Sensor>();
+		this.estadoAlarma=false;
 	}
 
 	public Integer getIdAlarma() {
@@ -54,11 +58,11 @@ public class Alarma {
 		this.nombre = nombre;
 	}
 
-	public ArrayList<Usuario> getUsuarios() {
+	public Set<Usuario> getUsuarios() {
 		return usuarios;
 	}
 
-	public void setUsuarios(ArrayList<Usuario> usuarios) {
+	public void setUsuarios(Set<Usuario> usuarios) {
 		this.usuarios = usuarios;
 	}
 
@@ -70,12 +74,56 @@ public class Alarma {
 		this.acciones = acciones;
 	}
 
-	public ArrayList<Sensor> getSensores() {
+	public Set<Sensor> getSensores() {
 		return sensores;
 	}
 
-	public void setSensores(ArrayList<Sensor> sensores) {
+	public void setSensores(Set<Sensor> sensores) {
 		this.sensores = sensores;
+	}
+
+	public Boolean getEstadoAlarma() {
+		return estadoAlarma;
+	}
+
+	public void setEstadoAlarma(Boolean estadoAlarma) {
+		this.estadoAlarma = estadoAlarma;
+	}
+
+	public boolean registrarUsuario(Usuario nuevo) {
+		return usuarios.add(nuevo);
+	}
+
+	public boolean agregarSensor(Sensor nuevo) {
+		return sensores.add(nuevo);
+	}
+
+	public boolean activarSensor(Sensor nuevo) {
+		Boolean estado = false;
+		if(estado != nuevo.getEstado()) {
+			return false;
+		}
+		nuevo.setEstado(true);
+		return true;
+	}
+
+	public boolean activarAlarma(Integer idAlarma, Integer codigoActivacion, UsuarioConfigurador usuario) {
+	
+		for(Sensor actual: sensores) {
+			if(actual.getEstado() != true) {
+				return false;
+			}
+		}
+		if(!this.codigoActivacion.equals(codigoActivacion)) {
+			return false;
+		}
+		for (Usuario actual: usuarios) { //ver esto
+			if(!actual.getDni().equals(usuario.getDni())) {
+				return false;
+		}
+		}
+		setEstadoAlarma(true);
+		return true;
 	}
 
 	
