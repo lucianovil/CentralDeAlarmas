@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import src.Alarma;
 import src.Central;
+import src.CodigoAlarmaIncorrectoException;
 import src.Sensor;
 import src.Usuario;
 import src.UsuarioActivador;
@@ -124,6 +125,30 @@ public class CentralDeAlarmas {
 	
 	@Test
 	public void QueSePuedaActivarUnaAlarmaSiTodosLosSensoresEstanActivados() {
+		Central atucha = new Central();
+		Integer idAlarma = 1;
+		Integer codigoActivacion = 1234;
+		Integer codigoConfiguracion= 0000;
+		String nombre = "TuAlarma";
+		Alarma nuevo = new Alarma(idAlarma, codigoActivacion, codigoConfiguracion, nombre);
+		assertTrue(atucha.agregarAlarma(nuevo));
+		Integer id =10;
+		String userName = "Pepito";
+		UsuarioConfigurador pepito = new UsuarioConfigurador(id, userName);
+		assertTrue(atucha.agregarUsuario(pepito));
+		Integer idSensor =1;
+		Integer idSensor2 =2;
+		Sensor ruido = new Sensor(idSensor);
+		Sensor luz = new Sensor(idSensor2);
+		assertTrue(nuevo.agregarSensor(ruido));
+		assertTrue(nuevo.agregarSensor(luz));
+		assertTrue(nuevo.activarSensor(ruido));
+		assertTrue(nuevo.activarSensor(luz));
+		assertTrue(nuevo.activarAlarma(idAlarma, codigoActivacion, pepito));
+	}
+	
+	@Test //ToDO terminar
+	public void alAgregarUnUsuarioAUnaAlarmaConCodigoDeConfiguracionDeAlarmaInvalidoSeLanceCodigoAlarmaIncorrectoException() throws CodigoAlarmaIncorrectoException { 
 		Central atucha = new Central();
 		Integer idAlarma = 1;
 		Integer codigoActivacion = 1234;
