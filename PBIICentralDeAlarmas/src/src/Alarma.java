@@ -4,21 +4,23 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import test.SensorDuplicadoException;
+
 public class Alarma {
 
 	private Integer idAlarma;
-	private Integer codigoActivacion;
-	private Integer codigoConfiguracion;
+	private Integer codigoActivacion= 1234;
+	private Integer codigoConfiguracion = 0000;
 	private String nombre;
 	private Set<Usuario> usuarios;
 	private ArrayList<Accion> acciones;
 	private Set<Sensor> sensores;
 	private Boolean estadoAlarma;
 
-	public Alarma(Integer idAlarma, Integer codigoActivacion, Integer codigoConfiguracion, String nombre) {
+	public Alarma(Integer idAlarma, Integer codigoActivacion, Integer codigoConfiguracion, String nombre) throws CodigoAlarmaIncorrectoException {
 		this.idAlarma=idAlarma;
 		this.codigoActivacion=codigoActivacion;
-		this.codigoConfiguracion=codigoConfiguracion;
+		this.setCodigoConfiguracion(codigoConfiguracion);
 		this.nombre=nombre;
 		this.usuarios =new HashSet<Usuario>();
 		this.acciones =new ArrayList<Accion>();
@@ -46,7 +48,10 @@ public class Alarma {
 		return codigoConfiguracion;
 	}
 
-	public void setCodigoConfiguracion(Integer codigoConfiguracion) {
+	public void setCodigoConfiguracion(Integer codigoConfiguracion) throws CodigoAlarmaIncorrectoException {
+		if(this.codigoConfiguracion != codigoConfiguracion) {
+			throw new CodigoAlarmaIncorrectoException();
+		}
 		this.codigoConfiguracion = codigoConfiguracion;
 	}
 
@@ -91,11 +96,24 @@ public class Alarma {
 	}
 
 	public boolean registrarUsuario(Usuario nuevo) {
+		
 		return usuarios.add(nuevo);
 	}
 
-	public boolean agregarSensor(Sensor nuevo) {
+	public boolean agregarSensor(Sensor nuevo) throws SensorDuplicadoException {
+		if (buscarSensor(nuevo) != null) {
+			throw new SensorDuplicadoException();
+		}
 		return sensores.add(nuevo);
+	}
+	
+	public Sensor buscarSensor(Sensor nuevo) {
+		for(Sensor actual: sensores) {
+			if (actual.getId_sensor().equals(nuevo.getId_sensor())) {
+				return actual;
+			}
+		}
+		return null;
 	}
 
 	public boolean activarSensor(Sensor nuevo) {
@@ -106,11 +124,20 @@ public class Alarma {
 		nuevo.setEstado(true);
 		return true;
 	}
+	
+	public boolean desactivarSensor(Sensor nuevo) {
+		Boolean estado = true;
+		if(estado != nuevo.getEstado()) {
+			return false;
+		}
+		nuevo.setEstado(false);
+		return true;
+	}
 
 	public boolean activarAlarma(Integer idAlarma, Integer codigoActivacion, UsuarioConfigurador usuario) {
 	
 		for(Sensor actual: sensores) {
-			if(actual.getEstado() != true) {
+			if(!actual.getEstado()) {
 				return false;
 			}
 		}
@@ -118,11 +145,30 @@ public class Alarma {
 			return false;
 		}
 		for (Usuario actual: usuarios) { //ver esto
-			if(!actual.getDni().equals(usuario.getDni())) {
+			if(!actual.equals(usuario)) {
 				return false;
 		}
 		}
 		setEstadoAlarma(true);
+		return true;
+	}
+	
+	public boolean desactivarAlarma(Integer idAlarma, Integer codigoActivacion, UsuarioConfigurador usuario) {
+		
+		for(Sensor actual: sensores) {
+			if(!actual.getEstado()) {
+				return false;
+			}
+		}
+		if(!this.codigoActivacion.equals(codigoActivacion)) {
+			return false;
+		}
+		for (Usuario actual: usuarios) { //ver esto
+			if(!actual.equals(usuario)) {
+				return false;
+		}
+		}
+		setEstadoAlarma(false);
 		return true;
 	}
 

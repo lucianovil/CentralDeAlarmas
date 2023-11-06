@@ -23,7 +23,7 @@ public class CentralDeAlarmas {
 	}
 
 	@Test
-	public void QueSePuedaCrearUnaAlarma() {
+	public void QueSePuedaCrearUnaAlarma() throws CodigoAlarmaIncorrectoException {
 		Integer idAlarma = 1;
 		Integer codigoActivacion = 1234;
 		Integer codigoConfiguracion= 0000;
@@ -33,7 +33,7 @@ public class CentralDeAlarmas {
 	}
 	
 	@Test //test punto 1.
-	public void QueSePuedaRegistrarUnaAlarmaEnLaCentral() {
+	public void QueSePuedaRegistrarUnaAlarmaEnLaCentral() throws CodigoAlarmaIncorrectoException {
 		Central atucha = new Central();
 		Integer idAlarma = 1;
 		Integer codigoActivacion = 1234;
@@ -44,7 +44,7 @@ public class CentralDeAlarmas {
 	}
 	
 	@Test
-	public void QueSePuedaAgregarUnUsuarioConfiguradorOActivadorAUnaAlarma() {
+	public void QueSePuedaAgregarUnUsuarioConfiguradorOActivadorAUnaAlarma() throws CodigoAlarmaIncorrectoException {
 		Central atucha = new Central();
 		Integer idAlarma = 1;
 		Integer codigoActivacion = 1234;
@@ -62,7 +62,7 @@ public class CentralDeAlarmas {
 	}
 	
 	@Test //test punto 2.
-	public void QueSePuedaAgregarUnUsuarioConfiguradorAUnaAlarma() {
+	public void QueSePuedaAgregarUnUsuarioConfiguradorAUnaAlarma() throws CodigoAlarmaIncorrectoException {
 		Central atucha = new Central();
 		Integer idAlarma = 1;
 		Integer codigoActivacion = 1234;
@@ -80,7 +80,7 @@ public class CentralDeAlarmas {
 	}
 	
 	@Test // preguntar
-	public void QueSePuedaAgregarUnUsuarioValidoAUnaAlarma() {
+	public void QueSePuedaAgregarUnUsuarioValidoAUnaAlarma() throws CodigoAlarmaIncorrectoException {
 		Central atucha = new Central();
 		Integer idAlarma = 1;
 		Integer codigoActivacion = 1234;
@@ -95,7 +95,7 @@ public class CentralDeAlarmas {
 	}
 	
 	@Test
-	public void QueSePuedaAgregarUnSensorAUnaAlarma() {
+	public void QueSePuedaAgregarUnSensorAUnaAlarma() throws CodigoAlarmaIncorrectoException, SensorDuplicadoException {
 		Central atucha = new Central();
 		Integer idAlarma = 1;
 		Integer codigoActivacion = 1234;
@@ -109,7 +109,7 @@ public class CentralDeAlarmas {
 	}
 	
 	@Test
-	public void QueSePuedaActivarUnSensorAUnaAlarma() {
+	public void QueSePuedaActivarUnSensorAUnaAlarma() throws CodigoAlarmaIncorrectoException, SensorDuplicadoException {
 		Central atucha = new Central();
 		Integer idAlarma = 1;
 		Integer codigoActivacion = 1234;
@@ -124,31 +124,7 @@ public class CentralDeAlarmas {
 	}
 	
 	@Test
-	public void QueSePuedaActivarUnaAlarmaSiTodosLosSensoresEstanActivados() {
-		Central atucha = new Central();
-		Integer idAlarma = 1;
-		Integer codigoActivacion = 1234;
-		Integer codigoConfiguracion= 0000;
-		String nombre = "TuAlarma";
-		Alarma nuevo = new Alarma(idAlarma, codigoActivacion, codigoConfiguracion, nombre);
-		assertTrue(atucha.agregarAlarma(nuevo));
-		Integer id =10;
-		String userName = "Pepito";
-		UsuarioConfigurador pepito = new UsuarioConfigurador(id, userName);
-		assertTrue(atucha.agregarUsuario(pepito));
-		Integer idSensor =1;
-		Integer idSensor2 =2;
-		Sensor ruido = new Sensor(idSensor);
-		Sensor luz = new Sensor(idSensor2);
-		assertTrue(nuevo.agregarSensor(ruido));
-		assertTrue(nuevo.agregarSensor(luz));
-		assertTrue(nuevo.activarSensor(ruido));
-		assertTrue(nuevo.activarSensor(luz));
-		assertTrue(nuevo.activarAlarma(idAlarma, codigoActivacion, pepito));
-	}
-	
-	@Test //ToDO terminar
-	public void alAgregarUnUsuarioAUnaAlarmaConCodigoDeConfiguracionDeAlarmaInvalidoSeLanceCodigoAlarmaIncorrectoException() throws CodigoAlarmaIncorrectoException { 
+	public void QueSePuedaActivarUnaAlarmaSiTodosLosSensoresEstanActivados() throws CodigoAlarmaIncorrectoException, SensorDuplicadoException {
 		Central atucha = new Central();
 		Integer idAlarma = 1;
 		Integer codigoActivacion = 1234;
@@ -169,6 +145,58 @@ public class CentralDeAlarmas {
 		assertTrue(nuevo.activarSensor(ruido));
 		assertTrue(nuevo.activarSensor(luz));
 		assertTrue(nuevo.activarAlarma(idAlarma, codigoActivacion, pepito));
+	}
+	
+	@Test (expected=CodigoAlarmaIncorrectoException.class) // punto 3
+	public void AlAgregarUnUsuarioAUnaAlarmaConCodigoDeConfiguracionDeAlarmaInvalidoSeLanceCodigoAlarmaIncorrectoException() throws CodigoAlarmaIncorrectoException { 
+		Central atucha = new Central();
+		Integer idAlarma = 1;
+		Integer codigoActivacion = 1234;
+		Integer codigoConfiguracion= 0001;
+		String nombre = "TuAlarma";
+		Alarma nuevo = new Alarma(idAlarma, codigoActivacion, codigoConfiguracion, nombre);
+		assertTrue(atucha.agregarAlarma(nuevo));
+	}
+	
+	
+	@Test (expected=SensorDuplicadoException.class) // punto 4
+	public void AlAgregarUnSensorDuplicadoSeLanceUnaSensorDuplicadoException() throws SensorDuplicadoException, CodigoAlarmaIncorrectoException { 
+		Central atucha = new Central();
+		Integer idAlarma = 1;
+		Integer codigoActivacion = 1234;
+		Integer codigoConfiguracion= 0000;
+		String nombre = "TuAlarma";
+		Alarma nuevo = new Alarma(idAlarma, codigoActivacion, codigoConfiguracion, nombre);
+		assertTrue(atucha.agregarAlarma(nuevo));
+		Integer idSensor =1;
+		Sensor ruido = new Sensor(idSensor);
+		assertTrue(nuevo.agregarSensor(ruido));
+		assertTrue(nuevo.agregarSensor(ruido));
+	}
+	
+	@Test // punto 5
+	public void queNoSePuedaActivarUnaAlarmaSiHayAlMenosUnSensorDesactivado() throws SensorDuplicadoException, CodigoAlarmaIncorrectoException { 
+		Central atucha = new Central();
+		Integer idAlarma = 1;
+		Integer codigoActivacion = 1234;
+		Integer codigoConfiguracion= 0000;
+		String nombre = "TuAlarma";
+		Alarma nuevo = new Alarma(idAlarma, codigoActivacion, codigoConfiguracion, nombre);
+		assertTrue(atucha.agregarAlarma(nuevo));
+		Integer id =10;
+		String userName = "Pepito";
+		UsuarioConfigurador pepito = new UsuarioConfigurador(id, userName);
+		assertTrue(atucha.agregarUsuario(pepito));
+		Integer idSensor =1;
+		Integer idSensor2 =2;
+		Sensor ruido = new Sensor(idSensor);
+		Sensor luz = new Sensor(idSensor2);
+		assertTrue(nuevo.agregarSensor(ruido));
+		assertTrue(nuevo.agregarSensor(luz));
+		assertTrue(nuevo.activarSensor(ruido));
+		assertTrue(nuevo.activarSensor(luz));
+		nuevo.desactivarSensor(luz);
+		assertFalse(nuevo.activarAlarma(idAlarma, codigoActivacion, pepito));
 	}
 	
 }
